@@ -9,6 +9,11 @@ Route::get('/', function () {
     return view('home');
 });
 
+// Adicione esta rota após as outras rotas:
+Route::get('/contato', function () {
+    return view('contato');
+})->name('contato');    
+
 // CRUD de Categorias
 Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
 Route::post('/categorias', [CategoriaController::class, 'store'])->name('categorias.store');

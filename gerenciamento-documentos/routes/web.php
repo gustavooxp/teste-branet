@@ -15,3 +15,5 @@ Route::post('/categorias', [CategoriaController::class, 'store'])->name('categor
 // AS NOVAS ROTAS DE DOCUMENTOS 
 Route::get('/documentos', [DocumentoController::class, 'index'])->name('documentos.index');
 Route::post('/documentos', [DocumentoController::class, 'store'])->name('documentos.store');
+
+Route::get('/documentos/{id}', [DocumentoController::class, 'show']);

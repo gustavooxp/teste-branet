@@ -21,18 +21,19 @@
                     <div class="card-body p-0 d-flex align-items-center justify-content-center bg-white" style="min-height: 400px;">
                         @php 
                             $ultimaVersao = $documento->versoes->sortByDesc('numero_versao')->first(); 
+                            $urlArquivo = Storage::url($ultimaVersao->caminho_arquivo);
                             $extensao = strtolower(pathinfo($ultimaVersao->caminho_arquivo, PATHINFO_EXTENSION));
                         @endphp
 
                         @if(in_array($extensao, ['jpg', 'jpeg', 'png']))
-                            <img src="{{ asset('storage/' . $ultimaVersao->caminho_arquivo) }}" class="img-fluid p-2" style="max-height: 580px;">
+                            <img src="{{ $urlArquivo }}" class="img-fluid p-2" style="max-height: 580px;">
                         @elseif($extensao == 'pdf')
-                            <iframe src="{{ asset('storage/' . $ultimaVersao->caminho_arquivo) }}" width="100%" height="600px" style="border:none;"></iframe>
+                            <iframe src="{{ $urlArquivo }}" width="100%" height="600px" style="border:none;"></iframe>
                         @else
                             <div class="text-center p-5">
                                 <div class="alert alert-info">
                                     <p>O arquivo <strong>.{{ $extensao }}</strong> não permite visualização direta.</p>
-                                    <a href="{{ asset('storage/' . $ultimaVersao->caminho_arquivo) }}" class="btn btn-primary" download>
+                                    <a href="{{ $urlArquivo }}" class="btn btn-primary" download>
                                         Baixar para Visualizar
                                     </a>
                                 </div>
@@ -63,12 +64,12 @@
                                                 {{ $versao->created_at->format('d/m/Y H:i') }}
                                             </td>
                                             <td class="text-end">
-                                                <a href="{{ asset('storage/' . $versao->caminho_arquivo) }}" target="_blank"
-                                                    class="btn btn-sm btn-outline-primary" title="Ver no navegador">Ver</a>
+                                                <a href="{{ Storage::url($versao->caminho_arquivo) }}" target="_blank"
+                                                    class="btn btn-sm btn-outline-primary">Ver</a>
 
-                                                <a href="{{ asset('storage/' . $versao->caminho_arquivo) }}" 
+                                                <a href="{{ Storage::url($versao->caminho_arquivo) }}" 
                                                    download="documento_v{{ $versao->numero_versao }}" 
-                                                   class="btn btn-sm btn-success" title="Baixar arquivo">
+                                                   class="btn btn-sm btn-success">
                                                    Baixar
                                                 </a>
                                             </td>
@@ -82,7 +83,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-12 mb-5">
                 <div class="card shadow-sm border-warning">
                     <div class="card-header bg-warning text-dark">
@@ -100,7 +101,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Substituir Arquivo (Gera Nova Versão)</label>
                                     <input type="file" name="arquivo" class="form-control">
-                                    <small class="text-muted">Formatos aceitos: PDF, DOCX, PNG, JPG</small>
+                                    <small class="text-muted">Formatos: PDF, DOCX, PNG, JPG</small>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-warning w-100">Salvar Alterações</button>

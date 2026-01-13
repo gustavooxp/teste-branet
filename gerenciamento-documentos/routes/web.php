@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DocumentoController;php -S localhost:8080 -t public 
+use App\Http\Controllers\DocumentoController; 
 use App\Http\Controllers\CategoriaController;
 
 Route::get('/', function () {

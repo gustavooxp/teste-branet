@@ -46,6 +46,7 @@
             </div>
         </div>
 
+
         <div class="card shadow-sm">
             <div class="card-header bg-dark text-white">Relatório de Documentos</div>
             <div class="card-body">
@@ -60,6 +61,29 @@
                         <button type="submit" class="btn btn-secondary w-100">Filtrar Período</button>
                     </div>
                 </form>
+
+                <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form action="/documentos" method="GET" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="busca" class="form-control" placeholder="Buscar por título..." value="{{ request('busca') }}">
+            </div>
+            <div class="col-md-4">
+                <select name="categoria_id" class="form-select">
+                    <option value="">Todas as Categorias</option>
+                    @foreach($categorias as $cat)
+                        <option value="{{ $cat->id }}" {{ request('categoria_id') == $cat->id ? 'selected' : '' }}>
+                            {{ $cat->nome }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+            </div>
+        </form>
+    </div>
+</div>
 
                 <table class="table table-striped">
                     <thead>

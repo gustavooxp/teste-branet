@@ -10,24 +10,24 @@ use App\Models\VersaoDocumento;
 class DocumentoController extends Controller
 {
     public function index(Request $request)
-    {
-        // Pegamos todas as categorias para preencher o "select" do formulário
-        $categorias = Categoria::all();
+{
+    $query = Documento::query();
 
-        // Iniciamos a busca de documentos
-        $query = Documento::query();
-
-        // Lógica do Relatório: Se o usuário preencher as datas, filtramos (Requisito do Teste)
-        if ($request->filled('data_inicio') && $request->filled('data_fim')) {
-            $query->whereBetween('data_documento', [$request->data_inicio, $request->data_fim]);
-        }
-
-        // Pegamos os documentos com a categoria carregada para evitar erros
-        $documentos = $query->with('categoria')->get();
-
-        // Enviamos tudo para a View que você acabou de criar
-        return view('documentos.index', compact('categorias', 'documentos'));
+    // Filtro por título
+    if ($request->has('busca')) {
+        $query->where('titulo', 'like', '%' . $request->busca . '%');
     }
+
+    // Filtro por categoria
+    if ($request->has('categoria_id') && $request->categoria_id != '') {
+        $query->where('categoria_id', $request->categoria_id);
+    }
+
+    $documentos = $query->with('categoria')->get();
+    $categorias = Categoria::all(); // Para preencher o select de filtro
+
+    return view('documentos.index', compact('documentos', 'categorias'));
+}
 
     // Esta função salva o documento e o arquivo
     public function store(Request $request)

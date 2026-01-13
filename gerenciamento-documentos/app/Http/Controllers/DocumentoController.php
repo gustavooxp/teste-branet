@@ -13,18 +13,28 @@ class DocumentoController extends Controller
 {
     $query = Documento::query();
 
-    // Filtro por título
-    if ($request->has('busca')) {
+    // Filtro por Título (Busca textual)
+    if ($request->filled('busca')) {
         $query->where('titulo', 'like', '%' . $request->busca . '%');
     }
 
-    // Filtro por categoria
-    if ($request->has('categoria_id') && $request->categoria_id != '') {
+    // Filtro por Categoria
+    if ($request->filled('categoria_id')) {
         $query->where('categoria_id', $request->categoria_id);
     }
 
-    $documentos = $query->with('categoria')->get();
-    $categorias = Categoria::all(); // Para preencher o select de filtro
+    // Filtro por Período (Datas)
+    if ($request->filled('data_inicio')) {
+        $query->whereDate('data_documento', '>=', $request->data_inicio);
+    }
+
+    if ($request->filled('data_fim')) {
+        $query->whereDate('data_documento', '<=', $request->data_fim);
+    }
+
+    // Carrega os documentos filtrados e as categorias para o select
+    $documentos = $query->with('categoria')->orderBy('created_at', 'desc')->get();
+    $categorias = Categoria::all();
 
     return view('documentos.index', compact('documentos', 'categorias'));
 }

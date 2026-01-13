@@ -282,7 +282,7 @@
                     <p class="mb-0 opacity-75">Tecnologia para governança com sucesso</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <small class="opacity-75">&copy; 2024 Branet Tecnologia - Teste Técnico. Todos os direitos reservados.</small>
+                    <small class="opacity-75">&copy; 2026 Branet Tecnologia - Teste Técnico. Todos os direitos reservados.</small>
                 </div>
             </div>
         </div>

@@ -9,12 +9,25 @@ use App\Models\VersaoDocumento;
 
 class DocumentoController extends Controller
 {
-    // Esta função abre a tela e leva as categorias junto
-    public function index()
-    {
-        $categorias = Categoria::all(); 
-        return view('documentos.index', compact('categorias'));
+    public function index(Request $request)
+{
+    // Pegamos todas as categorias para preencher o "select" do formulário
+    $categorias = Categoria::all();
+
+    // Iniciamos a busca de documentos
+    $query = Documento::query();
+
+    // Lógica do Relatório: Se o usuário preencher as datas, filtramos (Requisito do Teste)
+    if ($request->filled('data_inicio') && $request->filled('data_fim')) {
+        $query->whereBetween('data_documento', [$request->data_inicio, $request->data_fim]);
     }
+
+    // Pegamos os documentos com a categoria carregada para evitar erros
+    $documentos = $query->with('categoria')->get();
+
+    // Enviamos tudo para a View que você acabou de criar
+    return view('documentos.index', compact('categorias', 'documentos'));
+}
 
     // Esta função salva o documento e o arquivo
     public function store(Request $request)

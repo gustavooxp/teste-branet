@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Documento;
 use App\Models\Categoria;
 use App\Models\VersaoDocumento;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentoController extends Controller
 {
@@ -110,6 +111,27 @@ class DocumentoController extends Controller
         $documento = Documento::with(['versoes', 'categoria'])->findOrFail($id);
 
         return view('documentos.show', compact('documento'));
+    }
+
+    // Método para deletar documento
+    public function destroy($id)
+    {
+        $documento = Documento::with('versoes')->findOrFail($id);
+        
+        // Deleta todas as versões do arquivo no storage
+        foreach ($documento->versoes as $versao) {
+            if (Storage::disk('public')->exists($versao->caminho_arquivo)) {
+                Storage::disk('public')->delete($versao->caminho_arquivo);
+            }
+        }
+        
+        // Deleta as versões do banco de dados
+        $documento->versoes()->delete();
+        
+        // Deleta o documento
+        $documento->delete();
+        
+        return redirect()->route('documentos.index')->with('success', 'Documento excluído permanentemente!');
     }
 
 }

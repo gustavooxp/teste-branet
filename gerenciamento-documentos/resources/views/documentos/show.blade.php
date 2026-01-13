@@ -16,6 +16,7 @@
             --branet-light: #f8fafc;
             --branet-success: #10b981;
             --branet-warning: #f59e0b;
+            --branet-danger: #ef4444;
         }
         
         body {
@@ -170,6 +171,23 @@
             color: white;
         }
         
+        /* Botão de deletar (lixeira) */
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2);
+            color: white;
+        }
+        
         .table-branet {
             background: white;
             border-radius: 12px;
@@ -267,6 +285,35 @@
             margin-bottom: 0.5rem;
         }
         
+        /* Modal personalizado */
+        .modal-confirm-delete .modal-header {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+        }
+        
+        .modal-confirm-delete .modal-header .btn-close {
+            filter: invert(1);
+        }
+        
+        .confirmation-icon {
+            font-size: 4rem;
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+        
+        .confirmation-step {
+            transition: all 0.3s ease;
+        }
+        
+        .confirmation-step.active {
+            display: block;
+        }
+        
+        .confirmation-step:not(.active) {
+            display: none;
+        }
+        
         .footer-branet {
             background-color: var(--branet-dark);
             color: white;
@@ -285,6 +332,10 @@
             
             .visualizador-documento {
                 min-height: 300px;
+            }
+            
+            .confirmation-icon {
+                font-size: 3rem;
             }
         }
     </style>
@@ -328,15 +379,44 @@
                     <p class="mb-0 opacity-90">Detalhes e histórico de versões do documento</p>
                 </div>
                 <div class="mt-3 mt-md-0">
-                    <a href="/documentos" class="btn btn-branet-outline">
+                    <a href="/documentos" class="btn btn-branet-outline me-2">
                         <i class="bi bi-arrow-left me-2"></i>Voltar para Lista
                     </a>
+                    <!-- Botão de lixeira para deletar -->
+                    <button type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                        <i class="bi bi-trash me-2"></i>Excluir Documento
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="container">
+        <!-- Mensagens de sucesso/erro -->
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-left: 4px solid var(--branet-success);">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-3 fs-4 text-success"></i>
+                    <div>
+                        <strong>Sucesso!</strong> {{ session('success') }}
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="border-left: 4px solid #ef4444;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+                    <div>
+                        <strong>Atenção!</strong> {{ session('error') }}
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <div class="documento-info mb-4">
             <div class="row">
                 <div class="col-md-6">
@@ -523,6 +603,111 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmação Dupla -->
+    <div class="modal fade modal-confirm-delete" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Excluir Documento
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <!-- Primeira Confirmação -->
+                    <div id="firstConfirmation" class="confirmation-step active">
+                        <div class="text-center">
+                            <div class="confirmation-icon">
+                                <i class="bi bi-question-circle-fill"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Excluir documento?</h4>
+                            <p class="text-muted mb-4">
+                                Você está prestes a excluir o documento:<br>
+                                <strong class="text-dark">"{{ $documento->titulo }}"</strong>
+                            </p>
+                            <p class="text-danger mb-4">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                Esta ação não pode ser desfeita.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Segunda Confirmação -->
+                    <div id="secondConfirmation" class="confirmation-step">
+                        <div class="text-center">
+                            <div class="confirmation-icon">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3 text-danger">Confirmação Final</h4>
+                            <p class="text-danger mb-4">
+                                <strong>ATENÇÃO!</strong><br>
+                                Você está prestes a excluir permanentemente:
+                            </p>
+                            
+                            <div class="alert alert-danger border mb-4">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-trash-fill me-2 mt-1"></i>
+                                    <div>
+                                        <strong>Documento:</strong> {{ $documento->titulo }}<br>
+                                        <strong>Versões:</strong> {{ $documento->versoes->count() }} arquivo(s)<br>
+                                        <strong>Localização:</strong> {{ $documento->categoria->nome }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-check mb-4 text-start">
+                                <input class="form-check-input" type="checkbox" id="finalConfirmationCheckbox">
+                                <label class="form-check-label text-danger fw-medium" for="finalConfirmationCheckbox">
+                                    <i class="bi bi-shield-exclamation me-1"></i>
+                                    Eu entendo que esta exclusão é <strong>PERMANENTE e IRREVERSÍVEL</strong>
+                                </label>
+                            </div>
+                            
+                            <p class="text-muted small">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Todos os dados serão apagados definitivamente do sistema.
+                            </p>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer">
+                    
+                    <!-- Botões da Primeira Confirmação -->
+                    <div id="firstConfirmationButtons" class="confirmation-step active">
+                        <button type="button" class="btn btn-branet-outline" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-2"></i>Cancelar
+                        </button>
+                        <button type="button" class="btn btn-delete" onclick="showSecondConfirmation()">
+                            <i class="bi bi-trash me-2"></i>Sim, excluir
+                        </button>
+                    </div>
+                    
+                    <!-- Botões da Segunda Confirmação -->
+                    <div id="secondConfirmationButtons" class="confirmation-step">
+                        <button type="button" class="btn btn-branet-outline" onclick="backToFirstConfirmation()">
+                            <i class="bi bi-arrow-left me-2"></i>Voltar
+                        </button>
+                        
+                        <!-- Formulário de exclusão real -->
+                        <form action="{{ route('documentos.destroy', $documento->id) }}" method="POST" id="deleteForm" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" 
+                                    class="btn btn-delete" 
+                                    id="finalDeleteButton"
+                                    disabled>
+                                <i class="bi bi-trash-fill me-2"></i>Excluir Permanentemente
+                            </button>
+                        </form>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer-branet mt-5">
         <div class="container">
             <div class="row align-items-center">
@@ -538,5 +723,49 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Função para mostrar a segunda confirmação
+        function showSecondConfirmation() {
+            // Oculta a primeira confirmação
+            document.getElementById('firstConfirmation').classList.remove('active');
+            document.getElementById('firstConfirmationButtons').classList.remove('active');
+            
+            // Mostra a segunda confirmação
+            document.getElementById('secondConfirmation').classList.add('active');
+            document.getElementById('secondConfirmationButtons').classList.add('active');
+            
+            // Desabilita o botão final inicialmente
+            document.getElementById('finalDeleteButton').disabled = true;
+        }
+        
+        // Função para voltar para a primeira confirmação
+        function backToFirstConfirmation() {
+            // Oculta a segunda confirmação
+            document.getElementById('secondConfirmation').classList.remove('active');
+            document.getElementById('secondConfirmationButtons').classList.remove('active');
+            
+            // Mostra a primeira confirmação
+            document.getElementById('firstConfirmation').classList.add('active');
+            document.getElementById('firstConfirmationButtons').classList.add('active');
+            
+            // Reseta o checkbox
+            document.getElementById('finalConfirmationCheckbox').checked = false;
+        }
+        
+        // Quando o modal é fechado, reseta para a primeira confirmação
+        document.getElementById('confirmDeleteModal').addEventListener('hidden.bs.modal', function () {
+            backToFirstConfirmation();
+        });
+        
+        // Controla o botão de exclusão final baseado no checkbox
+        document.getElementById('finalConfirmationCheckbox').addEventListener('change', function() {
+            document.getElementById('finalDeleteButton').disabled = !this.checked;
+        });
+        
+        // Quando o modal é aberto, foca no primeiro botão
+        document.getElementById('confirmDeleteModal').addEventListener('shown.bs.modal', function () {
+            document.querySelector('#firstConfirmationButtons .btn-delete').focus();
+        });
+    </script>
 </body>
 </html>

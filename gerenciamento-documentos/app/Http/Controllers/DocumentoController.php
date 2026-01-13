@@ -3,31 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Documento;        
-use App\Models\Categoria;      
+use App\Models\Documento;
+use App\Models\Categoria;
 use App\Models\VersaoDocumento;
 
 class DocumentoController extends Controller
 {
     public function index(Request $request)
-{
-    // Pegamos todas as categorias para preencher o "select" do formulário
-    $categorias = Categoria::all();
+    {
+        // Pegamos todas as categorias para preencher o "select" do formulário
+        $categorias = Categoria::all();
 
-    // Iniciamos a busca de documentos
-    $query = Documento::query();
+        // Iniciamos a busca de documentos
+        $query = Documento::query();
 
-    // Lógica do Relatório: Se o usuário preencher as datas, filtramos (Requisito do Teste)
-    if ($request->filled('data_inicio') && $request->filled('data_fim')) {
-        $query->whereBetween('data_documento', [$request->data_inicio, $request->data_fim]);
+        // Lógica do Relatório: Se o usuário preencher as datas, filtramos (Requisito do Teste)
+        if ($request->filled('data_inicio') && $request->filled('data_fim')) {
+            $query->whereBetween('data_documento', [$request->data_inicio, $request->data_fim]);
+        }
+
+        // Pegamos os documentos com a categoria carregada para evitar erros
+        $documentos = $query->with('categoria')->get();
+
+        // Enviamos tudo para a View que você acabou de criar
+        return view('documentos.index', compact('categorias', 'documentos'));
     }
-
-    // Pegamos os documentos com a categoria carregada para evitar erros
-    $documentos = $query->with('categoria')->get();
-
-    // Enviamos tudo para a View que você acabou de criar
-    return view('documentos.index', compact('categorias', 'documentos'));
-}
 
     // Esta função salva o documento e o arquivo
     public function store(Request $request)
@@ -58,4 +58,14 @@ class DocumentoController extends Controller
 
         return redirect()->back()->with('success', 'Documento salvo com sucesso!');
     }
+
+    public function show($id)
+    {
+        // Busca o documento pelo ID ou retorna erro 404 se não existir
+        // O 'with' traz junto as versões e a categoria para ganhar performance
+        $documento = Documento::with(['versoes', 'categoria'])->findOrFail($id);
+
+        return view('documentos.show', compact('documento'));
+    }
+
 }

@@ -191,7 +191,7 @@
             background-color: var(--branet-dark);
             color: white;
             padding: 2rem 0;
-            margin-top: 4rem;
+            margin-top: 8rem;
         }
         
         @media (max-width: 768px) {

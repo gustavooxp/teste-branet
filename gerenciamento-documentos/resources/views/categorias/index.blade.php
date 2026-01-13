@@ -99,6 +99,22 @@
             box-shadow: 0 6px 12px rgba(30, 58, 138, 0.2);
             color: white;
         }
+
+        .btn-branet-danger {
+            background: linear-gradient(135deg, var(--branet-danger), #dc2626);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-branet-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2);
+            color: white;
+        }
         
         .form-alinhado {
             display: flex;
@@ -161,6 +177,56 @@
             color: white;
             padding: 2rem 0;
             margin-top: 3rem;
+        }
+
+        /* Modal de confirmação de exclusão */
+        .modal-delete .modal-content {
+            border-radius: 16px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .modal-delete .modal-header {
+            background: linear-gradient(135deg, #fee, #fdd);
+            border-bottom: none;
+            padding: 2rem 2rem 0.5rem 2rem;
+        }
+
+        .modal-delete .modal-body {
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-delete .modal-footer {
+            border-top: none;
+            padding: 0 2rem 2rem 2rem;
+        }
+
+        .delete-icon-container {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #fee, #fdd);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+        }
+
+        .delete-icon {
+            color: var(--branet-danger);
+            font-size: 2.5rem;
+        }
+
+        .category-name-highlight {
+            background: #fef2f2;
+            color: var(--branet-danger);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            border-left: 4px solid var(--branet-danger);
+            margin: 1rem 0;
         }
 
         @media (max-width: 768px) {
@@ -273,17 +339,14 @@
                                         <button class="btn-action text-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ $cat->id }}">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-                                        <form action="{{ route('categorias.destroy', $cat->id) }}" method="POST" onsubmit="return confirm('Excluir esta categoria?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn-action text-danger">
-                                                <i class="bi bi-trash3"></i>
-                                            </button>
-                                        </form>
+                                        <button class="btn-action text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $cat->id }}">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
 
+                            <!-- Modal de Edição -->
                             <div class="modal fade" id="editModal{{ $cat->id }}" tabindex="-1" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
@@ -303,6 +366,48 @@
                                                 <button type="submit" class="btn btn-branet-primary">Atualizar</button>
                                             </div>
                                         </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal de Confirmação de Exclusão -->
+                            <div class="modal fade modal-delete" id="deleteModal{{ $cat->id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title fw-bold text-danger">Confirmar Exclusão</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <div class="delete-icon-container">
+                                                <i class="bi bi-exclamation-triangle delete-icon"></i>
+                                            </div>
+                                            <h5 class="fw-bold mb-3">Tem certeza que deseja excluir?</h5>
+                                            <p class="text-muted">Esta ação não pode ser desfeita. A categoria será removida permanentemente.</p>
+                                            
+                                            <div class="category-name-highlight">
+                                                <i class="bi bi-tag me-2"></i>{{ $cat->nome }}
+                                            </div>
+                                            
+                                            <div class="alert alert-warning border-0 mt-3" style="background: #fffbeb;">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                                    <small class="fw-medium">Verifique se não há documentos vinculados a esta categoria antes de excluir.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer justify-content-center">
+                                            <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">
+                                                <i class="bi bi-x-circle me-2"></i>Cancelar
+                                            </button>
+                                            <form action="{{ route('categorias.destroy', $cat->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-branet-danger rounded-3 px-4">
+                                                    <i class="bi bi-trash3 me-2"></i>Sim, Excluir
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -333,5 +438,15 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Animação suave ao abrir modais de exclusão
+        document.querySelectorAll('.btn-action.text-danger').forEach(button => {
+            button.addEventListener('click', function() {
+                const modalId = this.getAttribute('data-bs-target');
+                const modal = document.querySelector(modalId);
+                modal.classList.add('fade');
+            });
+        });
+    </script>
 </body>
 </html>

@@ -10,42 +10,51 @@ use App\Models\VersaoDocumento;
 class DocumentoController extends Controller
 {
     public function index(Request $request)
-{
-    $query = Documento::query();
+    {
+        $query = Documento::query();
 
-    // Filtro por Título (Busca textual)
-    if ($request->filled('busca')) {
-        $query->where('titulo', 'like', '%' . $request->busca . '%');
+        // Filtro por Título (Busca textual)
+        if ($request->filled('busca')) {
+            $query->where('titulo', 'like', '%' . $request->busca . '%');
+        }
+
+        // Filtro por Categoria
+        if ($request->filled('categoria_id')) {
+            $query->where('categoria_id', $request->categoria_id);
+        }
+
+        // Filtro por Período (Datas)
+        if ($request->filled('data_inicio')) {
+            $query->whereDate('data_documento', '>=', $request->data_inicio);
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->whereDate('data_documento', '<=', $request->data_fim);
+        }
+
+        // Carrega os documentos filtrados e as categorias para o select
+        $documentos = $query->with('categoria')->orderBy('created_at', 'desc')->get();
+        $categorias = Categoria::all();
+
+        return view('documentos.index', compact('documentos', 'categorias'));
     }
 
-    // Filtro por Categoria
-    if ($request->filled('categoria_id')) {
-        $query->where('categoria_id', $request->categoria_id);
+    // Método para exibir o formulário de criação
+    public function create()
+    {
+        // Carrega as categorias para o select do formulário
+        $categorias = Categoria::all();
+        
+        return view('documentos.create', compact('categorias'));
     }
-
-    // Filtro por Período (Datas)
-    if ($request->filled('data_inicio')) {
-        $query->whereDate('data_documento', '>=', $request->data_inicio);
-    }
-
-    if ($request->filled('data_fim')) {
-        $query->whereDate('data_documento', '<=', $request->data_fim);
-    }
-
-    // Carrega os documentos filtrados e as categorias para o select
-    $documentos = $query->with('categoria')->orderBy('created_at', 'desc')->get();
-    $categorias = Categoria::all();
-
-    return view('documentos.index', compact('documentos', 'categorias'));
-}
 
     // Esta função salva o documento e o arquivo
     public function store(Request $request)
     {
         $request->validate([
-            'titulo' => 'required',
-            'categoria_id' => 'required',
-            'arquivo' => 'required|mimes:pdf,docx,png,jpg|max:2048',
+            'titulo' => 'required|string|max:255',
+            'categoria_id' => 'required|exists:categorias,id',
+            'arquivo' => 'required|file|mimes:pdf,docx,doc,png,jpg,jpeg|max:10240', // max 10MB
         ]);
 
         // 1. Cria o registro do documento
@@ -66,7 +75,7 @@ class DocumentoController extends Controller
             'numero_versao' => 1,
         ]);
 
-        return redirect()->back()->with('success', 'Documento salvo com sucesso!');
+        return redirect()->route('documentos.index')->with('success', 'Documento salvo com sucesso!');
     }
 
     public function update(Request $request, $id)

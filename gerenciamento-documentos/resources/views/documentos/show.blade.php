@@ -291,7 +291,6 @@
 </head>
 <body>
 
-    <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-branet">
         <div class="container">
             <a class="navbar-brand navbar-brand-branet" href="/">
@@ -321,7 +320,6 @@
         </div>
     </nav>
 
-    <!-- Page Header -->
     <div class="page-header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center flex-wrap">
@@ -338,9 +336,7 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="container">
-        <!-- Informações do Documento -->
         <div class="documento-info mb-4">
             <div class="row">
                 <div class="col-md-6">
@@ -367,7 +363,6 @@
         </div>
 
         <div class="row">
-            <!-- Visualização do Documento -->
             <div class="col-lg-7 mb-4">
                 <div class="card-branet h-100">
                     <div class="card-header-branet">
@@ -382,6 +377,7 @@
                                 $ultimaVersao = $documento->versoes->sortByDesc('numero_versao')->first(); 
                                 $urlArquivo = Storage::url($ultimaVersao->caminho_arquivo);
                                 $extensao = strtolower(pathinfo($ultimaVersao->caminho_arquivo, PATHINFO_EXTENSION));
+                                $nomeArquivoLimpo = \Illuminate\Support\Str::slug($documento->titulo);
                             @endphp
 
                             @if(in_array($extensao, ['jpg', 'jpeg', 'png']))
@@ -402,7 +398,9 @@
                                         <p class="text-muted mb-3">
                                             O arquivo <strong>.{{ $extensao }}</strong> não permite visualização direta no navegador.
                                         </p>
-                                        <a href="{{ $urlArquivo }}" class="btn btn-branet-primary" download>
+                                        <a href="{{ $urlArquivo }}" 
+                                           class="btn btn-branet-primary" 
+                                           download="{{ $nomeArquivoLimpo }}_v{{ $ultimaVersao->numero_versao }}">
                                             <i class="bi bi-download me-2"></i>Baixar para Visualizar
                                         </a>
                                     </div>
@@ -413,7 +411,6 @@
                 </div>
             </div>
 
-            <!-- Histórico de Versões -->
             <div class="col-lg-5 mb-4">
                 <div class="card-branet h-100">
                     <div class="card-header-dark">
@@ -453,7 +450,7 @@
                                                     </a>
                                                     
                                                     <a href="{{ Storage::url($versao->caminho_arquivo) }}" 
-                                                       download="documento_v{{ $versao->numero_versao }}" 
+                                                       download="{{ \Illuminate\Support\Str::slug($documento->titulo) }}_v{{ $versao->numero_versao }}" 
                                                        class="btn btn-branet-success btn-sm">
                                                         <i class="bi bi-download"></i>
                                                     </a>
@@ -469,7 +466,6 @@
             </div>
         </div>
 
-        <!-- Formulário de Atualização -->
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card-branet border-warning">
@@ -527,7 +523,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer-branet mt-5">
         <div class="container">
             <div class="row align-items-center">

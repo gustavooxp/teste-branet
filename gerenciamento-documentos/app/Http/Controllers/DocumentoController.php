@@ -59,6 +59,31 @@ class DocumentoController extends Controller
         return redirect()->back()->with('success', 'Documento salvo com sucesso!');
     }
 
+    public function update(Request $request, $id)
+    {
+        $documento = Documento::findOrFail($id);
+
+        // Se o usuário enviou um arquivo novo, criamos uma nova versão
+        if ($request->hasFile('arquivo')) {
+            // 1. Sobe o arquivo novo
+            $caminho = $request->file('arquivo')->store('documentos', 'public');
+
+            // 2. Descobre qual o número da última versão e soma +1
+            $ultimaVersao = $documento->versoes->max('numero_versao') ?? 1;
+
+            // 3. Salva no histórico de versões
+            $documento->versoes()->create([
+                'caminho_arquivo' => $caminho,
+                'numero_versao' => $ultimaVersao + 1,
+            ]);
+        }
+
+        // Atualiza os outros dados (Título, Localização, etc)
+        $documento->update($request->only(['titulo', 'categoria_id', 'localizacao_fisica', 'data_documento']));
+
+        return redirect()->back()->with('success', 'Documento e versão atualizados!');
+    }
+
     public function show($id)
     {
         // Busca o documento pelo ID ou retorna erro 404 se não existir

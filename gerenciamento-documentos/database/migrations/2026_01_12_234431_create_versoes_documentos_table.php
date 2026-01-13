@@ -9,14 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+   public function up(): void
 {
     Schema::create('versoes_documentos', function (Blueprint $table) {
         $table->id();
-        // Liga a versão ao documento pai
+        // ESTA LINHA É A QUE FALTA:
         $table->foreignId('documento_id')->constrained('documentos')->onDelete('cascade');
-        $table->string('caminho_arquivo'); // Onde o arquivo vai ficar no disco
-        $table->integer('numero_versao');  // 1, 2, 3...
+        $table->string('caminho_arquivo');
+        $table->integer('numero_versao');
         $table->timestamps();
     });
 }

@@ -445,7 +445,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Adiciona confirmação ao clicar nos links de contato
         document.addEventListener('DOMContentLoaded', function() {
             const contactLinks = document.querySelectorAll('a[href^="tel:"]');
             contactLinks.forEach(link => {
@@ -456,7 +455,6 @@
                 });
             });
             
-            // Formata o número de telefone para exibição
             const phoneElements = document.querySelectorAll('span:contains("+55 (48) 9 9602-6605")');
             phoneElements.forEach(el => {
                 el.textContent = '+55 (48) 9 9602-6605';

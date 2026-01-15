@@ -14,7 +14,6 @@ class VersaoDocumento extends Model
         'numero_versao'
     ];
 
-    // Uma versão pertence a um documento
     public function documento()
     {
         return $this->belongsTo(Documento::class, 'documento_id');

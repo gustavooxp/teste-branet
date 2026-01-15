@@ -541,7 +541,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Elementos DOM
         const fileInput = document.getElementById('fileInput');
         const dropArea = document.getElementById('dropArea');
         const filePreview = document.getElementById('filePreview');
@@ -549,7 +548,6 @@
         const fileSize = document.getElementById('fileSize');
         const fileIcon = document.getElementById('fileIcon');
         
-        // Extensões e ícones
         const fileIcons = {
             'pdf': 'bi-file-earmark-pdf',
             'docx': 'bi-file-earmark-word',
@@ -559,7 +557,6 @@
             'jpeg': 'bi-file-earmark-image'
         };
         
-        // Função para formatar tamanho do arquivo
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
@@ -568,13 +565,11 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
         
-        // Função para obter ícone baseado na extensão
         function getFileIcon(filename) {
             const extension = filename.split('.').pop().toLowerCase();
             return fileIcons[extension] || 'bi-file-earmark-text';
         }
         
-        // Função para exibir preview do arquivo
         function showFilePreview(file) {
             fileName.textContent = file.name;
             fileSize.textContent = formatFileSize(file.size);
@@ -583,21 +578,18 @@
             dropArea.classList.add('d-none');
         }
         
-        // Função para remover arquivo selecionado
         function removeFile() {
             fileInput.value = '';
             filePreview.classList.add('d-none');
             dropArea.classList.remove('d-none');
         }
         
-        // Evento quando arquivo é selecionado
         fileInput.addEventListener('change', function(e) {
             if (this.files.length > 0) {
                 showFilePreview(this.files[0]);
             }
         });
         
-        // Drag and drop
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
         });
@@ -623,7 +615,6 @@
             dropArea.classList.remove('drag-over');
         }
         
-        // Drop
         dropArea.addEventListener('drop', handleDrop, false);
         
         function handleDrop(e) {
@@ -636,7 +627,6 @@
             }
         }
         
-        // Validação de tamanho máximo (10MB)
         document.getElementById('documentForm').addEventListener('submit', function(e) {
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
@@ -650,7 +640,6 @@
             }
         });
         
-        // Se houver erro de validação no campo arquivo, mostrar mensagem
         @if($errors->has('arquivo'))
             document.addEventListener('DOMContentLoaded', function() {
                 alert('Erro no arquivo: {{ $errors->first("arquivo") }}');

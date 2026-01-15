@@ -171,7 +171,6 @@
             color: white;
         }
         
-        /* Botão de deletar (lixeira) */
         .btn-delete {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
@@ -285,7 +284,6 @@
             margin-bottom: 0.5rem;
         }
         
-        /* Modal personalizado */
         .modal-confirm-delete .modal-header {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
@@ -321,25 +319,24 @@
             margin-top: 3rem;
         }
 
-        /* Botão de edição inline */
-.btn-edit-inline {
-    background: transparent;
-    border: none;
-    color: var(--branet-primary);
-    padding: 0.25rem 0.5rem;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s;
-}
+        .btn-edit-inline {
+        background: transparent;
+        border: none;
+        color: var(--branet-primary);
+        padding: 0.25rem 0.5rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        }
 
-.btn-edit-inline:hover {
-    color: var(--branet-secondary);
-    transform: scale(1.1);
-}
+        .btn-edit-inline:hover {
+        color: var(--branet-secondary);
+        transform: scale(1.1);
+        }
 
-.modal-sm .modal-dialog {
-    max-width: 400px;
-}
+        .modal-sm .modal-dialog {
+        max-width: 400px;
+        }
         
         @media (max-width: 768px) {
             .page-header {
@@ -821,50 +818,38 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Função para mostrar a segunda confirmação
         function showSecondConfirmation() {
-            // Oculta a primeira confirmação
             document.getElementById('firstConfirmation').classList.remove('active');
             document.getElementById('firstConfirmationButtons').classList.remove('active');
             
-            // Mostra a segunda confirmação
             document.getElementById('secondConfirmation').classList.add('active');
             document.getElementById('secondConfirmationButtons').classList.add('active');
             
-            // Desabilita o botão final inicialmente
             document.getElementById('finalDeleteButton').disabled = true;
         }
         
-        // Função para voltar para a primeira confirmação
         function backToFirstConfirmation() {
-            // Oculta a segunda confirmação
             document.getElementById('secondConfirmation').classList.remove('active');
             document.getElementById('secondConfirmationButtons').classList.remove('active');
             
-            // Mostra a primeira confirmação
             document.getElementById('firstConfirmation').classList.add('active');
             document.getElementById('firstConfirmationButtons').classList.add('active');
             
-            // Reseta o checkbox
             document.getElementById('finalConfirmationCheckbox').checked = false;
         }
         
-        // Quando o modal é fechado, reseta para a primeira confirmação
         document.getElementById('confirmDeleteModal').addEventListener('hidden.bs.modal', function () {
             backToFirstConfirmation();
         });
         
-        // Controla o botão de exclusão final baseado no checkbox
         document.getElementById('finalConfirmationCheckbox').addEventListener('change', function() {
             document.getElementById('finalDeleteButton').disabled = !this.checked;
         });
         
-        // Quando o modal é aberto, foca no primeiro botão
         document.getElementById('confirmDeleteModal').addEventListener('shown.bs.modal', function () {
             document.querySelector('#firstConfirmationButtons .btn-delete').focus();
         });
 
-// Foco automático nos campos quando os modais são abertos
 document.getElementById('modalCategoria').addEventListener('shown.bs.modal', function () {
     document.querySelector('#modalCategoria select').focus();
 });

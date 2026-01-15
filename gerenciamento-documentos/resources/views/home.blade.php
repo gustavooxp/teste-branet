@@ -12,15 +12,10 @@
     <style>
         :root {
             --branet-primary: #1e3a8a;
-            /* Azul escuro profissional */
             --branet-secondary: #0ea5e9;
-            /* Azul claro */
             --branet-accent: #f59e0b;
-            /* Laranja/dourado para destaques */
             --branet-dark: #1f2937;
-            /* Cinza escuro para textos */
             --branet-light: #f8fafc;
-            /* Fundo claro */
         }
 
         body {
@@ -30,7 +25,6 @@
             line-height: 1.6;
         }
 
-        /* Header estilo Branet */
         .navbar-branet {
             background-color: var(--branet-primary) !important;
             padding: 1rem 0;
@@ -59,7 +53,6 @@
             color: var(--branet-accent) !important;
         }
 
-        /* Hero Section */
         .hero-section {
             background: linear-gradient(135deg, var(--branet-primary) 0%, #2563eb 100%);
             color: white;
@@ -82,7 +75,6 @@
             margin: 0 auto;
         }
 
-        /* Cards estilo profissional */
         .card-branet {
             border: none;
             border-radius: 12px;
@@ -134,7 +126,6 @@
             font-size: 0.95rem;
         }
 
-        /* Footer */
         .footer-branet {
             background-color: var(--branet-dark);
             color: white;
@@ -152,7 +143,6 @@
             color: var(--branet-accent);
         }
 
-        /* Responsividade */
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 2.2rem;

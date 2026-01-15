@@ -7,13 +7,11 @@ use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
-    // Lista as categorias
     public function index() {
         $categorias = Categoria::all();
         return view('categorias.index', compact('categorias'));
     }
 
-    // Salva a categoria no banco
     public function store(Request $request)
 {
     $request->validate(['nome' => 'required|unique:categorias|max:255']);
@@ -35,7 +33,6 @@ public function update(Request $request, Categoria $categoria)
 
 public function destroy(Categoria $categoria)
 {
-    // Verificação de segurança: não deletar se houver documentos
     if ($categoria->documentos()->count() > 0) {
         return redirect()->back()->with('error', 'Não é possível excluir: existem documentos nesta categoria.');
     }

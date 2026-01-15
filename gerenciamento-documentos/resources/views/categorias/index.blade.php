@@ -179,7 +179,6 @@
             margin-top: 3rem;
         }
 
-        /* Modal de confirmação de exclusão */
         .modal-delete .modal-content {
             border-radius: 16px;
             border: none;
@@ -439,7 +438,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Animação suave ao abrir modais de exclusão
         document.querySelectorAll('.btn-action.text-danger').forEach(button => {
             button.addEventListener('click', function() {
                 const modalId = this.getAttribute('data-bs-target');

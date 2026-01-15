@@ -320,6 +320,26 @@
             padding: 2rem 0;
             margin-top: 3rem;
         }
+
+        /* Botão de edição inline */
+.btn-edit-inline {
+    background: transparent;
+    border: none;
+    color: var(--branet-primary);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-edit-inline:hover {
+    color: var(--branet-secondary);
+    transform: scale(1.1);
+}
+
+.modal-sm .modal-dialog {
+    max-width: 400px;
+}
         
         @media (max-width: 768px) {
             .page-header {
@@ -425,9 +445,12 @@
                         <span class="info-value">{{ $documento->titulo }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label"><i class="bi bi-folder me-2"></i>Categoria:</span>
-                        <span class="info-value">{{ $documento->categoria->nome }}</span>
-                    </div>
+    <span class="info-label"><i class="bi bi-folder me-2"></i>Categoria:</span>
+    <span class="info-value">{{ $documento->categoria->nome }}</span>
+    <button type="button" class="btn-edit-inline" data-bs-toggle="modal" data-bs-target="#modalCategoria">
+        <i class="bi bi-pencil-square"></i>
+    </button>
+</div>
                 </div>
                 <div class="col-md-6">
                     <div class="info-item">
@@ -435,9 +458,12 @@
                         <span class="info-value">{{ \Carbon\Carbon::parse($documento->data_documento)->format('d/m/Y') }}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label"><i class="bi bi-geo-alt me-2"></i>Localização Física:</span>
-                        <span class="info-value">{{ $documento->localizacao_fisica ?? 'Não informada' }}</span>
-                    </div>
+    <span class="info-label"><i class="bi bi-geo-alt me-2"></i>Localização Física:</span>
+    <span class="info-value">{{ $documento->localizacao_fisica ?? 'Não informada' }}</span>
+    <button type="button" class="btn-edit-inline" data-bs-toggle="modal" data-bs-target="#modalLocalizacao">
+        <i class="bi bi-pencil-square"></i>
+    </button>
+</div>
                 </div>
             </div>
         </div>
@@ -603,6 +629,77 @@
         </div>
     </div>
 
+    <!-- Modal para editar Categoria -->
+<div class="modal fade" id="modalCategoria" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--branet-primary), #2563eb);">
+                <h5 class="modal-title text-white">
+                    <i class="bi bi-folder me-2"></i>Alterar Categoria
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('documentos.update', $documento->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="titulo" value="{{ $documento->titulo }}">
+                <input type="hidden" name="localizacao_fisica" value="{{ $documento->localizacao_fisica }}">
+                <input type="hidden" name="data_documento" value="{{ $documento->data_documento }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nova Categoria:</label>
+                        <select name="categoria_id" class="form-select" required>
+                            @foreach(\App\Models\Categoria::all() as $categoria)
+                                <option value="{{ $categoria->id }}" {{ $documento->categoria_id == $categoria->id ? 'selected' : '' }}>
+                                    {{ $categoria->nome }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-branet-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-branet-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar Localização -->
+<div class="modal fade" id="modalLocalizacao" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--branet-primary), #2563eb);">
+                <h5 class="modal-title text-white">
+                    <i class="bi bi-geo-alt me-2"></i>Alterar Localização
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('documentos.update', $documento->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="titulo" value="{{ $documento->titulo }}">
+                <input type="hidden" name="categoria_id" value="{{ $documento->categoria_id }}">
+                <input type="hidden" name="data_documento" value="{{ $documento->data_documento }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nova Localização Física:</label>
+                        <input type="text" name="localizacao_fisica" 
+                               value="{{ $documento->localizacao_fisica }}" 
+                               class="form-control" 
+                               placeholder="Ex: Arquivo A, Prateleira 3">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-branet-outline" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-branet-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
     <!-- Modal de Confirmação Dupla -->
     <div class="modal fade modal-confirm-delete" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -766,6 +863,16 @@
         document.getElementById('confirmDeleteModal').addEventListener('shown.bs.modal', function () {
             document.querySelector('#firstConfirmationButtons .btn-delete').focus();
         });
+
+// Foco automático nos campos quando os modais são abertos
+document.getElementById('modalCategoria').addEventListener('shown.bs.modal', function () {
+    document.querySelector('#modalCategoria select').focus();
+});
+
+document.getElementById('modalLocalizacao').addEventListener('shown.bs.modal', function () {
+    document.querySelector('#modalLocalizacao input').focus();
+});
+
     </script>
 </body>
 </html>

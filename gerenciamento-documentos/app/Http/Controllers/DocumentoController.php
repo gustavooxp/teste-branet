@@ -105,13 +105,15 @@ class DocumentoController extends Controller
     }
 
     public function show($id)
-    {
-        // Busca o documento pelo ID ou retorna erro 404 se não existir
-        // O 'with' traz junto as versões e a categoria para ganhar performance
-        $documento = Documento::with(['versoes', 'categoria'])->findOrFail($id);
+{
+    // Busca o documento pelo ID ou retorna erro 404 se não existir
+    $documento = Documento::with(['versoes', 'categoria'])->findOrFail($id);
+    
+    // ADICIONE ESTA LINHA para carregar as categorias
+    $categorias = Categoria::all();
 
-        return view('documentos.show', compact('documento'));
-    }
+    return view('documentos.show', compact('documento', 'categorias'));
+}
 
     // Método para deletar documento
     public function destroy($id)
